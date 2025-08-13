@@ -8,11 +8,11 @@ import TestQuestions from '../subComponents/TestQuestions';
 import TestResultsSection from '../subComponents/TestResultsSection';
 
 const getCategory = (score) => {
-  if (score <= 98) return 'Bad';
-  if (score <= 99) return 'Below Average';
-  if (score <= 100) return 'Average';
-  if (score <= 105) return 'Good';
-  return 'Excellent';
+  if (score <= 40) return 'Bad';           // 0–40
+  if (score <= 80) return 'Below Average'; // 41–80
+  if (score <= 120) return 'Average';      // 81–120
+  if (score <= 140) return 'Good';         // 121–140
+  return 'Excellent';                      // 141–160
 };
 
 function Dashboard() {
@@ -79,12 +79,28 @@ function Dashboard() {
     setTestStarted(false);
     setSubmitted(false);
 
-    // re-fetch chart data so it's updated
+    // re-fetch chart data
     axios.get('http://localhost:5000/api/test/category-distribution', {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(res => setChartData(res.data))
     .catch(err => console.log('Chart error:', err));
+
+    // re-fetch best score
+    axios.get('http://localhost:5000/api/test/history', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(res => {
+      if (res.data.length > 0) {
+        const best = res.data.reduce((max, test) => test.score > max.score ? test : max, res.data[0]);
+        setBestScore({
+          score: best.score,
+          totalMarks: best.totalMarks || 160,
+          percentage: ((best.score / (best.totalMarks || 160)) * 100).toFixed(2)
+        });
+      }
+    })
+    .catch(err => console.error('Error fetching test history:', err));
   };
 
   const handleAutoSelect = () => {

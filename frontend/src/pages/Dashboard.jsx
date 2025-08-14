@@ -35,14 +35,14 @@ function Dashboard() {
   }, [token, navigate]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/test/category-distribution', {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/test/category-distribution`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(res => setChartData(res.data))
       .catch(err => console.log('Chart error:', err));
   }, [token]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/test/history', {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/test/history`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(res => {
       if (res.data.length > 0) {
@@ -58,7 +58,7 @@ function Dashboard() {
 
   const handleStartTest = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/test/questions', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/test/questions`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQuestions(res.data);
@@ -80,14 +80,14 @@ function Dashboard() {
     setSubmitted(false);
 
     // re-fetch chart data
-    axios.get('http://localhost:5000/api/test/category-distribution', {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/test/category-distribution`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(res => setChartData(res.data))
     .catch(err => console.log('Chart error:', err));
 
     // re-fetch best score
-    axios.get('http://localhost:5000/api/test/history', {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/test/history`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(res => {
@@ -120,10 +120,10 @@ function Dashboard() {
     setSubmitted(true);
 
     try {
-      await axios.post('http://localhost:5000/api/test/submit', { score: total, category: cat }, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/test/submit`, { score: total, category: cat }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const res = await axios.get('http://localhost:5000/api/test/category-distribution', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/test/category-distribution`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setChartData(res.data);
